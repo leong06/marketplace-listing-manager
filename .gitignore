@@ -32,3 +32,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Vaadin generated files
+/src/main/frontend/generated/
+/node_modules/
+vite.generated.ts
+
+# Build output
+/target/
+
+# Local secrets
+.env
