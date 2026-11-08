@@ -22,6 +22,12 @@ public class CategoryService {
         return categoryRepository.findAll(Sort.by("name"));
     }
 
+    @Transactional(readOnly = true)
+    public CategoryEntity findById(Long id){
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+    }
+
     public CategoryEntity rename(Long id, String newName){
         String trimName = newName == null ? "" : newName.trim();
         if (trimName.isEmpty()) {
