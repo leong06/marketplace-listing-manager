@@ -6,6 +6,7 @@ import com.leong.marketplacelistingmanager.services.CategoryService;
 import com.leong.marketplacelistingmanager.services.ItemService;
 import com.leong.marketplacelistingmanager.services.PhotoStorageService;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -44,6 +45,8 @@ public class CategoryView extends VerticalLayout implements HasUrlParameter<Long
         itemGrid.addColumn(item -> item.getStatus().getLabel()).setHeader("Státusz");
         RouterLink backButton =  new RouterLink("Vissza a kategóriákhoz", CategoryListView.class);
         Button addItem = new Button("Új elem hozzáadása", event -> createDialog());
+        itemGrid.addItemDoubleClickListener(event ->
+                UI.getCurrent().navigate(ItemView.class, event.getItem().getId()));
         add(titleHeader, backButton, addItem, itemGrid);
 
     }
