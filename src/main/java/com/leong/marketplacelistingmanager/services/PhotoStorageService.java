@@ -10,7 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -60,6 +64,29 @@ public class PhotoStorageService {
         String extension = dotIndex >= 0 ? originalFileName.substring(dotIndex).toLowerCase() : ".jpg";
         String newFileName = String.format("%03d%s", nextNumber, extension);
         Files.copy(fileContent, folder.resolve(newFileName));
+    }
+
+    public List<Path> listPhotos(ItemEntity item) throws IOException {
+        if(item.getPhotoFolderPath() == null) {
+            return List.of();
+        }
+        Path folder = Path.of(item.getPhotoFolderPath());
+        if(!Files.exists(folder)) {
+            return List.of();
+        }
+
+        try(var stream = Files.list(folder)) {
+            return stream
+                    .filter(Files::isRegularFile)
+                    .sorted()
+                    .toList();
+        }
+    }
+
+    public void openFolder(ItemEntity item) throws IOException{
+        if(item.getPhotoFolderPath() != null) {
+          new ProcessBuilder("explorer.exe", item.getPhotoFolderPath()).start();
+        }
     }
 
 
