@@ -3,6 +3,7 @@ package com.leong.marketplacelistingmanager.views;
 import com.leong.marketplacelistingmanager.entities.CategoryEntity;
 import com.leong.marketplacelistingmanager.services.CategoryService;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -27,6 +28,10 @@ public class CategoryListView extends VerticalLayout {
         Button addButton = new Button("Új kategória", event -> openAddDialog());
 
         add(new H2("Kategóriák"), addButton, categoryGrid);
+
+        categoryGrid.addItemDoubleClickListener(event ->
+                UI.getCurrent().navigate(CategoryView.class, event.getItem().getId()));
+
         refreshGrid();
     }
 
