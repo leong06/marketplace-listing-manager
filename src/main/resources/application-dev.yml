@@ -1,4 +1,11 @@
+app:
+  photos:
+    root: ${user.home}/Pictures/ItemPhotos
 spring:
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 200MB
   datasource:
     url: jdbc:postgresql://localhost:5432/marketplace-postgres
     username: marketplaceUser
