@@ -6,6 +6,7 @@ import com.leong.marketplacelistingmanager.services.ItemService;
 import com.leong.marketplacelistingmanager.services.PhotoStorageService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.clipboard.Clipboard;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -70,8 +71,18 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
             }
         });
 
+        Button copyDescription = new Button("Leírás másolása", event ->{
+            UI.getCurrent().getPage().executeJs(
+                    "navigator.clipboard.writeText($0)",
+                    descriptionField.getValue()
+            );
+            Notification.show("Leírás a vágólapra másolva");
+        });
+        //Clipboard.onClick(copyDescription).writeText(descriptionField.getValue());
 
-        add(backButton, photoGallery, openFolderButton, titleField, statusSelect, descriptionField, saveButton, deleteButton);
+
+
+        add(backButton, photoGallery, openFolderButton, titleField, statusSelect, descriptionField, copyDescription, saveButton, deleteButton);
         binder.forField(titleField).bind(ItemEntity::getTitle, ItemEntity::setTitle);
         binder.forField(statusSelect).bind(ItemEntity::getStatus, ItemEntity::setStatus);
         binder.forField(descriptionField).bind(ItemEntity::getDescription, ItemEntity::setDescription);
