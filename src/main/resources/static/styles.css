@@ -1,3 +1,25 @@
 html {
     font-size: 120%;
 }
+
+.photo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.photo-card img {
+    width: 450px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.photo-card-label {
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: #555;
+}

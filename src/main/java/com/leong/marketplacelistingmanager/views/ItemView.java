@@ -8,7 +8,9 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.clipboard.Clipboard;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -119,6 +121,7 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         this.currentItem = itemService.findById(parameter);
         binder.readBean(currentItem);
 
+        photoGallery.setWrap(true);
         photoGallery.removeAll();
         try {
             for (Path photoPath: photoStorageService.listPhotos(currentItem)){
@@ -126,8 +129,16 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
                         DownloadHandler.forFile(photoPath.toFile()),
                         photoPath.getFileName().toString()
                 );
+
+                Span caption = new Span(photoPath.getFileName().toString());
+                caption.addClassName("photo-card-label");
+
+                Div card = new Div(img, caption);
+                card.addClassName("photo-card");
+
+
                 img.setHeight("500px");
-                photoGallery.add(img);
+                photoGallery.add(card);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
