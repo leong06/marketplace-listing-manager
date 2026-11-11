@@ -1,5 +1,6 @@
 package com.leong.marketplacelistingmanager.views;
 
+import com.leong.marketplacelistingmanager.entities.CategoryEntity;
 import com.leong.marketplacelistingmanager.entities.ItemEntity;
 import com.leong.marketplacelistingmanager.entities.ItemStatus;
 import com.leong.marketplacelistingmanager.services.ItemService;
@@ -8,6 +9,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.clipboard.Clipboard;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -70,11 +72,11 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         });
 
         Button deleteButton = new Button("Törlés", event ->{
-            Long categoryId = currentItem.getCategory().getId();
-            itemService.deleteById(currentItem.getId());
 
-            Notification.show("Sikeres törlés!");
-            UI.getCurrent().navigate(CategoryView.class, categoryId);
+//            itemService.deleteById(currentItem.getId());
+//
+//            Notification.show("Sikeres törlés!");
+            openDeleteDialog(currentItem);
         });
 
         Button openFolderButton = new Button("Mappa megnyitása", event ->{
@@ -136,6 +138,34 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
 
         return upload;
     }
+
+    private void openDeleteDialog(ItemEntity item) {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Kategória törlése");
+        dialog.add(new Span("Biztosan törölni szeretnéd ezt a tárgyat?"));
+
+        Long categoryId = item.getCategory().getId();
+
+        Button confirmDeleteButton = new Button("Törlés", event -> {
+            try{
+                itemService.deleteById(item.getId());
+                dialog.close();
+                UI.getCurrent().navigate(CategoryView.class, categoryId);
+                Notification.show("A törlés sikeres!");
+            } catch (IllegalArgumentException e){
+                Notification.show(e.getMessage());
+                dialog.close();
+            }
+        });
+        confirmDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+
+        Button cancelDeleteButton = new Button("Mégsem", event -> dialog.close());
+        cancelDeleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        dialog.getFooter().add(confirmDeleteButton, cancelDeleteButton);
+        dialog.open();
+    }
+
 
     @Override
     public void setParameter(BeforeEvent event, Long parameter) {
