@@ -80,7 +80,11 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         });
         //Clipboard.onClick(copyDescription).writeText(descriptionField.getValue());
 
-
+        //Style
+        setMaxWidth("1100px");
+        setWidthFull();
+        getStyle().set("margin", "0 auto");
+        getStyle().set("padding", "1.5rem 2rem");
 
         add(backButton, photoGallery, openFolderButton, titleField, statusSelect, descriptionField, copyDescription, saveButton, deleteButton);
         binder.forField(titleField).bind(ItemEntity::getTitle, ItemEntity::setTitle);

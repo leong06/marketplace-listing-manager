@@ -32,6 +32,11 @@ public class CategoryListView extends VerticalLayout {
         categoryGrid.addItemDoubleClickListener(event ->
                 UI.getCurrent().navigate(CategoryView.class, event.getItem().getId()));
 
+        setMaxWidth("1100px");
+        setWidthFull();
+        getStyle().set("margin", "0 auto");
+        getStyle().set("padding", "1.5rem 2rem");
+
         refreshGrid();
     }
 

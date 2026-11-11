@@ -49,6 +49,11 @@ public class CategoryView extends VerticalLayout implements HasUrlParameter<Long
                 UI.getCurrent().navigate(ItemView.class, event.getItem().getId()));
         add(titleHeader, backButton, addItem, itemGrid);
 
+        setMaxWidth("1100px");
+        setWidthFull();
+        getStyle().set("margin", "0 auto");
+        getStyle().set("padding", "1.5rem 2rem");
+
     }
 
     private void createDialog() {
