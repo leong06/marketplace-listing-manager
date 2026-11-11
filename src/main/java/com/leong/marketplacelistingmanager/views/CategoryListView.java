@@ -9,6 +9,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -24,6 +25,11 @@ public class CategoryListView extends VerticalLayout {
     public CategoryListView(CategoryService categoryService) {
         this.categoryService = categoryService;
         categoryGrid.addColumn(CategoryEntity::getName).setHeader("Név");
+        categoryGrid.addComponentColumn(item -> {
+            Button deleteButton = new Button("❌", event -> openDeleteDialog(item));
+            deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+            return deleteButton;
+        });
 
         Button addButton = new Button("Új kategória", event -> openAddDialog());
 
@@ -38,6 +44,31 @@ public class CategoryListView extends VerticalLayout {
         getStyle().set("padding", "1.5rem 2rem");
 
         refreshGrid();
+    }
+
+    private void openDeleteDialog(CategoryEntity category) {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Kategória törlése");
+        dialog.add(new Span("Biztosan törölni szeretné a(z) " + category.getName() + " kategóriát?"));
+
+        Button confirmDeleteButton = new Button("Törlés", event -> {
+           try{
+               categoryService.deleteById(category.getId());
+               refreshGrid();
+               dialog.close();
+               Notification.show("A kategória sikeresen törölve!");
+           } catch (IllegalArgumentException e){
+               Notification.show(e.getMessage());
+               dialog.close();
+           }
+        });
+        confirmDeleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+
+        Button cancelDeleteButton = new Button("Mégsem", event -> dialog.close());
+        cancelDeleteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        dialog.getFooter().add(confirmDeleteButton, cancelDeleteButton);
+        dialog.open();
     }
 
     private void openAddDialog() {

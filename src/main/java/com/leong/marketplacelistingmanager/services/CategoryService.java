@@ -3,6 +3,7 @@ package com.leong.marketplacelistingmanager.services;
 import com.leong.marketplacelistingmanager.entities.CategoryEntity;
 import com.leong.marketplacelistingmanager.repositories.CategoryRepository;
 
+import com.leong.marketplacelistingmanager.repositories.ItemRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,14 +14,17 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ItemRepository itemRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ItemRepository itemRepository) {
         this.categoryRepository = categoryRepository;
+        this.itemRepository = itemRepository;
     }
 
     public List<CategoryEntity> findAll(){
         return categoryRepository.findAll(Sort.by("name"));
     }
+
 
     @Transactional(readOnly = true)
     public CategoryEntity findById(Long id){
@@ -57,7 +61,11 @@ public class CategoryService {
 
     @Transactional
     public void deleteById(Long id){
+        if(!itemRepository.findByCategoryIdOrderByTitleAsc(id).isEmpty()){
+            throw new IllegalArgumentException("Nem törölhető nem üres kategória!");
+        }
         categoryRepository.deleteById(id);
+
     }
 
 
