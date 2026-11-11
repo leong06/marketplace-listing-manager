@@ -8,6 +8,7 @@ import com.leong.marketplacelistingmanager.repositories.ItemRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -15,10 +16,12 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
+    private final PhotoStorageService photoStorageService;
 
-    public ItemService(ItemRepository itemRepository, CategoryRepository categoryRepository) {
+    public ItemService(ItemRepository itemRepository, CategoryRepository categoryRepository, PhotoStorageService photoStorageService) {
         this.itemRepository = itemRepository;
         this.categoryRepository = categoryRepository;
+        this.photoStorageService = photoStorageService;
     }
 
     public List<ItemEntity> findByCategory(Long categoryId){
@@ -65,6 +68,12 @@ public class ItemService {
 
     @Transactional
     public void deleteById(Long id){
+        ItemEntity item = findById(id);
+        try {
+            photoStorageService.deleteItemFolder(item);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to delete item folder", e);
+        }
         itemRepository.deleteById(id);
     }
 

@@ -72,6 +72,7 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         Button deleteButton = new Button("Törlés", event ->{
             Long categoryId = currentItem.getCategory().getId();
             itemService.deleteById(currentItem.getId());
+
             Notification.show("Sikeres törlés!");
             UI.getCurrent().navigate(CategoryView.class, categoryId);
         });
@@ -147,7 +148,6 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
 
     private void refreshPhotoGallery(Long parameter){
         currentItem = getCurrentItem(parameter);
-        binder.readBean(currentItem);
         photoGallery.removeAll();
         try {
             for (Path photoPath: photoStorageService.listPhotos(currentItem)){

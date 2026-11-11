@@ -89,5 +89,20 @@ public class PhotoStorageService {
         }
     }
 
+    public void deleteItemFolder(ItemEntity item) throws IOException{
+        if(item.getPhotoFolderPath() == null) {
+            return;
+        }
+        Path folder = Path.of(item.getPhotoFolderPath());
+        if(!Files.exists(folder)) {
+            return;
+        }
+        for(Path photo: listPhotos(item)){
+            Files.deleteIfExists(photo);
+        }
+        Files.deleteIfExists(folder);
+    }
+
+
 
 }
