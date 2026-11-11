@@ -17,12 +17,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.UploadHandler;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -109,12 +113,28 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-        add(topToolbar, photoGallery, statusBar, descriptionField, bottomToolbar);
+        Upload upload = uploadButton();
+
+        add(topToolbar, photoGallery, upload, statusBar, descriptionField, bottomToolbar);
+
         binder.forField(titleField).bind(ItemEntity::getTitle, ItemEntity::setTitle);
         binder.forField(statusSelect).bind(ItemEntity::getStatus, ItemEntity::setStatus);
         binder.forField(descriptionField).bind(ItemEntity::getDescription, ItemEntity::setDescription);
     }
 
+    private Upload uploadButton(){
+        Upload upload = new Upload(UploadHandler.inMemory(((metadata, data) ->
+                photoStorageService.savePhoto(currentItem.getId(), metadata.fileName(), new ByteArrayInputStream(data)))));
+        upload.setAcceptedFileTypes("image/*");
+        upload.setUploadButton(new Button("Képek feltöltése"));
+        upload.addAllFinishedListener(event -> {
+           this.currentItem = getCurrentItem(currentItem.getId());
+           refreshPhotoGallery(currentItem.getId());
+           upload.clearFileList();
+        });
+
+        return upload;
+    }
 
     @Override
     public void setParameter(BeforeEvent event, Long parameter) {
@@ -122,6 +142,12 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         binder.readBean(currentItem);
 
         photoGallery.setWrap(true);
+        refreshPhotoGallery(parameter);
+    }
+
+    private void refreshPhotoGallery(Long parameter){
+        currentItem = getCurrentItem(parameter);
+        binder.readBean(currentItem);
         photoGallery.removeAll();
         try {
             for (Path photoPath: photoStorageService.listPhotos(currentItem)){
@@ -145,4 +171,10 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         }
 
     }
+
+    private ItemEntity getCurrentItem(Long parameter){
+        return itemService.findById(parameter);
+    }
+
+
 }
