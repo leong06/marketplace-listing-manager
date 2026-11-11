@@ -6,6 +6,7 @@ import com.leong.marketplacelistingmanager.services.ItemService;
 import com.leong.marketplacelistingmanager.services.PhotoStorageService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.clipboard.Clipboard;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
@@ -29,9 +30,15 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
     private final Select<ItemStatus> statusSelect = new Select<>();
     private final TextArea descriptionField = new TextArea("Leírás");
     private final ItemService itemService;
+
     private ItemEntity currentItem;
     private PhotoStorageService photoStorageService;
     private final HorizontalLayout photoGallery = new HorizontalLayout();
+
+    private final HorizontalLayout topToolbar = new HorizontalLayout();
+    private final HorizontalLayout statusBar = new HorizontalLayout();
+    private final HorizontalLayout bottomToolbar = new HorizontalLayout();
+
     Binder<ItemEntity> binder = new Binder<>(ItemEntity.class);
 
     public ItemView(ItemService itemService, PhotoStorageService photoStorageService) {
@@ -86,7 +93,21 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         getStyle().set("margin", "0 auto");
         getStyle().set("padding", "1.5rem 2rem");
 
-        add(backButton, photoGallery, openFolderButton, titleField, statusSelect, descriptionField, copyDescription, saveButton, deleteButton);
+        topToolbar.add(backButton, openFolderButton);
+
+        statusSelect.setLabel("Hirdetés státusza:");
+        statusBar.add(titleField, statusSelect);
+        titleField.setWidthFull();
+        statusBar.setWidthFull();
+
+        descriptionField.setWidthFull();
+        descriptionField.setMaxHeight("180px");
+
+        bottomToolbar.add(saveButton, copyDescription, deleteButton);
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+        add(topToolbar, photoGallery, statusBar, descriptionField, bottomToolbar);
         binder.forField(titleField).bind(ItemEntity::getTitle, ItemEntity::setTitle);
         binder.forField(statusSelect).bind(ItemEntity::getStatus, ItemEntity::setStatus);
         binder.forField(descriptionField).bind(ItemEntity::getDescription, ItemEntity::setDescription);
