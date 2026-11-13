@@ -2,6 +2,7 @@ package com.leong.marketplacelistingmanager.views;
 
 import com.leong.marketplacelistingmanager.entities.CategoryEntity;
 import com.leong.marketplacelistingmanager.entities.ItemEntity;
+import com.leong.marketplacelistingmanager.entities.ItemStatus;
 import com.leong.marketplacelistingmanager.services.CategoryService;
 import com.leong.marketplacelistingmanager.services.ItemService;
 import com.leong.marketplacelistingmanager.services.PhotoStorageService;
@@ -48,6 +49,9 @@ public class CategoryView extends VerticalLayout implements HasUrlParameter<Long
         itemGrid.addItemDoubleClickListener(event ->
                 UI.getCurrent().navigate(ItemView.class, event.getItem().getId()));
         add(titleHeader, backButton, addItem, itemGrid);
+
+        itemGrid.setPartNameGenerator(item ->
+                item.getStatus() == ItemStatus.LISTING ? "active-listing" : null);
 
         setMaxWidth("1100px");
         setWidthFull();

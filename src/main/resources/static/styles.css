@@ -13,13 +13,26 @@ html {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 .photo-card img {
-    width: 450px;
-    height: 250px;
-    object-fit: cover;
+    width: 120px;
+    height: 45px;
+    object-fit: contain;
     border-radius: 8px;
 }
 .photo-card-label {
     margin-top: 0.4rem;
     font-size: 0.8rem;
     color: #555;
+}
+
+vaadin-grid::part(active-listing) {
+    background-color: #ebf4ff;
+    border-top: 2px solid #006af5;
+    border-bottom: 2px solid #006af5;
+    font-weight: 600;
+}
+vaadin-grid::part(first-column-cell active-listing) {
+    border-left: 2px solid #006af5;
+}
+vaadin-grid::part(last-column-cell active-listing) {
+    border-right: 2px solid #006af5;
 }
