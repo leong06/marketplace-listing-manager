@@ -96,12 +96,6 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         });
         //Clipboard.onClick(copyDescription).writeText(descriptionField.getValue());
 
-        //Style
-        setMaxWidth("1100px");
-        setWidthFull();
-        getStyle().set("margin", "0 auto");
-        getStyle().set("padding", "1.5rem 2rem");
-
         topToolbar.add(backButton, openFolderButton);
 
         statusSelect.setLabel("Hirdetés státusza:");
@@ -141,7 +135,7 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
 
     private void openDeleteDialog(ItemEntity item) {
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Kategória törlése");
+        dialog.setHeaderTitle("Tétel törlése");
         dialog.add(new Span("Biztosan törölni szeretnéd ezt a tárgyat?"));
 
         Long categoryId = item.getCategory().getId();

@@ -11,6 +11,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -21,6 +22,9 @@ import com.vaadin.flow.router.Route;
 public class CategoryListView extends VerticalLayout {
     private final CategoryService categoryService;
     private final Grid<CategoryEntity> categoryGrid = new Grid<>(CategoryEntity.class, false);
+
+    private HorizontalLayout topToolbar = new HorizontalLayout();
+
 
     public CategoryListView(CategoryService categoryService) {
         this.categoryService = categoryService;
@@ -33,15 +37,11 @@ public class CategoryListView extends VerticalLayout {
 
         Button addButton = new Button("Új kategória", event -> openAddDialog());
         Button soldItemsButton = new Button("Eladott termékek", event -> UI.getCurrent().navigate(SoldItemsView.class));
-        add(new H2("Kategóriák"), addButton, soldItemsButton, categoryGrid);
+        topToolbar.add(addButton, soldItemsButton);
+        add(new H2("Kategóriák"), topToolbar, categoryGrid);
 
         categoryGrid.addItemDoubleClickListener(event ->
                 UI.getCurrent().navigate(CategoryView.class, event.getItem().getId()));
-
-        setMaxWidth("1100px");
-        setWidthFull();
-        getStyle().set("margin", "0 auto");
-        getStyle().set("padding", "1.5rem 2rem");
 
         refreshGrid();
     }
