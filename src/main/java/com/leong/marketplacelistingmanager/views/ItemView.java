@@ -38,6 +38,7 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
     private final Select<ItemStatus> statusSelect = new Select<>();
     private final TextArea descriptionField = new TextArea("Leírás");
     private final ItemService itemService;
+    private boolean openedFromSoldItems;
 
     private ItemEntity currentItem;
     private PhotoStorageService photoStorageService;
@@ -56,7 +57,11 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         statusSelect.setItemLabelGenerator(ItemStatus::getLabel);
 
         Button backButton = new Button("Vissza", event ->{
-            UI.getCurrent().navigate(CategoryView.class, currentItem.getCategory().getId());
+            if(openedFromSoldItems){
+                UI.getCurrent().navigate(SoldItemsView.class);
+            } else {
+                UI.getCurrent().navigate(CategoryView.class, currentItem.getCategory().getId());
+            }
         });
 
         Button saveButton = new Button("Mentés", event ->{
@@ -164,6 +169,7 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
     @Override
     public void setParameter(BeforeEvent event, Long parameter) {
         this.currentItem = itemService.findById(parameter);
+        this.openedFromSoldItems = currentItem.getStatus().equals(ItemStatus.SOLD);
         binder.readBean(currentItem);
 
         photoGallery.setWrap(true);
