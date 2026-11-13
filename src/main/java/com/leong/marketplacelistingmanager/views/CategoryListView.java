@@ -32,8 +32,8 @@ public class CategoryListView extends VerticalLayout {
         });
 
         Button addButton = new Button("Új kategória", event -> openAddDialog());
-
-        add(new H2("Kategóriák"), addButton, categoryGrid);
+        Button soldItemsButton = new Button("Eladott termékek", event -> UI.getCurrent().navigate(SoldItemsView.class));
+        add(new H2("Kategóriák"), addButton, soldItemsButton, categoryGrid);
 
         categoryGrid.addItemDoubleClickListener(event ->
                 UI.getCurrent().navigate(CategoryView.class, event.getItem().getId()));
