@@ -25,7 +25,7 @@ public class ItemService {
     }
 
     public List<ItemEntity> findByCategory(Long categoryId){
-        return itemRepository.findByCategoryIdOrderByTitleAsc(categoryId);
+        return itemRepository.findByCategoryIdAndStatusNotOrderByStatusAscCreatedAtDesc(categoryId, ItemStatus.SOLD);
     }
     @Transactional
     public ItemEntity findById(Long id){
@@ -76,6 +76,11 @@ public class ItemService {
         }
         itemRepository.deleteById(id);
     }
+
+    public List<ItemEntity> findSoldItem(){
+        return itemRepository.findByStatusOrderByCreatedAtDesc(ItemStatus.SOLD);
+    }
+
 
 
 }
