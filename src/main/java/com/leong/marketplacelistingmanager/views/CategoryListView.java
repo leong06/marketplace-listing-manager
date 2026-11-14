@@ -16,6 +16,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @Route("")
 @PageTitle("Kategóriák")
@@ -24,10 +26,11 @@ public class CategoryListView extends VerticalLayout {
     private final Grid<CategoryEntity> categoryGrid = new Grid<>(CategoryEntity.class, false);
 
     private HorizontalLayout topToolbar = new HorizontalLayout();
+    private final ConfigurableApplicationContext applicationContext;
 
-
-    public CategoryListView(CategoryService categoryService) {
+    public CategoryListView(CategoryService categoryService, ConfigurableApplicationContext applicationContext) {
         this.categoryService = categoryService;
+        this.applicationContext = applicationContext;
         categoryGrid.addColumn(CategoryEntity::getName).setHeader("Név");
         categoryGrid.addComponentColumn(item -> {
             Button deleteButton = new Button("❌", event -> openDeleteDialog(item));
@@ -35,15 +38,34 @@ public class CategoryListView extends VerticalLayout {
             return deleteButton;
         });
 
+        Button shutdownButton = new Button("Program leállítása", event -> shutdownProgram());
+        shutdownButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        shutdownButton.getStyle().set("margin-left", "auto");
+
         Button addButton = new Button("Új kategória", event -> openAddDialog());
         Button soldItemsButton = new Button("Eladott termékek", event -> UI.getCurrent().navigate(SoldItemsView.class));
-        topToolbar.add(addButton, soldItemsButton);
+        topToolbar.add(addButton, soldItemsButton, shutdownButton);
         add(new H2("Kategóriák"), topToolbar, categoryGrid);
+
 
         categoryGrid.addItemDoubleClickListener(event ->
                 UI.getCurrent().navigate(CategoryView.class, event.getItem().getId()));
 
         refreshGrid();
+    }
+
+    private void shutdownProgram() {
+        UI.getCurrent().getPage().executeJs("document.body.innerHTML = '<h2 style=\"text-align:center;margin-top:20vh;font-family:sans-serif;\">A program sikeresen leállt. Bezárhatod ezt a böngészőfület.</h2>';" +
+                "window.close();");
+
+        new Thread(() -> {
+            try{
+                Thread.sleep(500);
+            } catch (InterruptedException ignored){}
+            SpringApplication.exit(applicationContext, () -> 0);
+            System.exit(0);
+        }).start();
+
     }
 
     private void openDeleteDialog(CategoryEntity category) {
