@@ -173,7 +173,7 @@ public class ItemView extends VerticalLayout implements HasUrlParameter<Long> {
         binder.readBean(currentItem);
 
         photoGallery.setWrap(true);
-        refreshPhotoGallery(parameter);
+        //refreshPhotoGallery(parameter);
     }
 
     private void refreshPhotoGallery(Long parameter){
